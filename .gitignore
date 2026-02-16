@@ -1,0 +1,6 @@
+.env
+.session.json
+.claude
+*.pyc
+__pycache__/
+dev/

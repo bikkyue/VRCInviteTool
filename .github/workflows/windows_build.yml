@@ -1,0 +1,42 @@
+name: Build Windows App
+
+# トリガー: mainブランチへのPush、または手動実行(workflow_dispatch)
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    # 1. コードのチェックアウト
+    - uses: actions/checkout@v4
+
+    # 2. Pythonのセットアップ
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # 3. 依存関係のインストール
+    - name: Install dependencies
+      shell: pwsh
+      run: |
+        pip install -r requirements.txt
+        pip install "flet-desktop>=0.21,<0.28" pyinstaller
+
+    # 4. PyInstaller でビルド (flet のWebアセットを含める)
+    - name: Build Windows App
+      env:
+        PYTHONUTF8: "1"
+      shell: pwsh
+      run: pyinstaller --name VRCInviteTool --onefile --windowed --collect-all flet --collect-all flet_desktop main.py
+
+    # 5. 成果物をアップロード
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-app-release
+        path: dist/VRCInviteTool.exe

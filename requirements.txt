@@ -1,0 +1,3 @@
+vrchatapi
+flet>=0.21,<0.28
+requests
