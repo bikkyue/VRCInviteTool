@@ -3,7 +3,7 @@ name: Build Windows App
 on:
   push:
     branches: [ "main" ]
-    tags: [ "v*" ] # "v"で始まるタグ（v1.0.0など）がプッシュされた時にトリガー
+    tags: [ "v*" ]  # "v"で始まるタグ（v1.0.0など）がプッシュされた時にトリガー
   workflow_dispatch:
 
 # GitHub Tokenの権限設定（Release作成に必要）
@@ -38,18 +38,23 @@ jobs:
       shell: pwsh
       run: pyinstaller --name VRCInviteTool --onefile --windowed --collect-all flet --collect-all flet_desktop main.py
 
-    # 5. 成果物をArtifactsにアップロード (確認用・常に実行)
+    # 5. 成果物をArtifactsにアップロード 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: VRCInviteTool
         path: dist/VRCInviteTool.exe
 
-    # 6. Releaseを作成してファイルを添付
+    # 6. ZIP化
+    - name: Zip artifact
+      shell: pwsh
+      run: Compress-Archive -Path dist/VRCInviteTool.exe -DestinationPath dist/VRCInviteTool.zip
+
+    # 7. Releaseを作成してファイルを添付
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: dist/VRCInviteTool.exe
-        draft: true   
+        files: dist/VRCInviteTool.zip
+        draft: true
         prerelease: false
