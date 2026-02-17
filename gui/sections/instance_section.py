@@ -26,7 +26,7 @@ def fetch_favorite_worlds(api_client) -> list:
     w_api = worlds_api.WorldsApi(api_client)
 
     groups = fav_api.get_favorite_groups(n=100)
-    world_groups = [g for g in groups if str(g.type) == "world"]
+    world_groups = [g for g in groups if str(g.type) in ("world", "vrcPlusWorld")]
 
     all_worlds = []
     for group in world_groups:
