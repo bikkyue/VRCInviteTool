@@ -1,0 +1,535 @@
+/* VRCInviteTool — ライトテーマ (単一)。配色は CSS 変数で定義する。セクションは枠無しでページ背景に直接置く。 */
+:root {
+  color-scheme: light;
+  --page-bg: #eaf3fa;
+  --card-bg: #ffffff;
+  --border: #dbe4ee;
+  --border-strong: #c9d5e2;
+  --text: #1f2429;
+  --text-dim: #6b7280;
+  --heading: #374151;
+  --title: #111827;
+  --control-h: 38px;
+  --accent: #5b9bd5;
+  --accent-hover: #4a8ac4;
+  --accent-soft: #e6f0fa;
+  --on-accent: #ffffff;
+  --error: #c2352f;
+  --warning: #9a6700;
+  --info: var(--accent);
+  --input-bg: #ffffff;
+  --input-border: var(--border-strong);
+  --item-hover: #f1f6fb;
+  --chip-bg: #eef3f8;
+  --disabled-bg: #c7d7e6;
+  --disabled-fg: #ffffff;
+  --log-bg: #f8fafc;
+  --log-fg: #2b3138;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --dialog-shadow: 0 8px 24px rgba(16, 24, 40, 0.16);
+  --backdrop: rgba(16, 24, 40, 0.35);
+  --spinner-track: rgba(16, 24, 40, 0.12);
+  --hover-overlay: rgba(16, 24, 40, 0.06);
+  --radius: 8px;
+  --radius-sm: 6px;
+  --pill: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: "Segoe UI", "Yu Gothic UI", "Meiryo", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- ヘッダー (枠無し。ページ背景の上に直接置く) --- */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 4px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.banner-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--title);
+}
+.banner-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.banner-right .user-name {
+  color: var(--text);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 名前 | 更新 | ログアウト の区切り線 */
+.banner-right .sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-strong);
+  margin: 0 12px;
+  flex: 0 0 auto;
+}
+
+/* --- セクション (枠・背景・影は付けず、余白と見出しだけで区切る) --- */
+.card {
+  padding: 8px 4px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--heading);
+}
+.section-title .icon {
+  color: var(--accent);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.row.wrap {
+  flex-wrap: wrap;
+}
+.grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.split {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.split > .col {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.side-panel {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-left: 10px;
+  text-align: center;
+}
+.side-panel.world {
+  width: 220px;
+}
+.side-panel.user {
+  width: 120px;
+}
+.side-panel img.thumb {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.side-panel img.avatar {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 40px;
+  border: 1px solid var(--border);
+}
+.side-panel .name {
+  font-weight: 700;
+  color: var(--heading);
+  word-break: break-all;
+}
+.side-panel .error {
+  font-size: 12px;
+}
+
+/* --- フォーム --- */
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.field label {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.field input,
+.field select {
+  width: 100%;
+  height: var(--control-h);
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  font-size: 14px;
+  line-height: normal;
+  outline: none;
+}
+/* ▽ は右端 0.75rem・上下中央に置き、文字と重ならないよう右側に余白を取る */
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 12px;
+}
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+.field input[readonly] {
+  color: var(--text-dim);
+}
+.field input.with-icon {
+  padding-left: 36px;
+}
+/* 入力欄内の左アイコン / 右ボタン: 入力欄 (高さ --control-h) の上下中央に揃える */
+.field .prefix-icon {
+  position: absolute;
+  left: 12px;
+  bottom: 0;
+  height: var(--control-h);
+  display: flex;
+  align-items: center;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+.field .suffix-btn {
+  position: absolute;
+  right: 4px;
+  bottom: 0;
+  height: var(--control-h);
+  width: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.field select option {
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+/* --- ボタン (Tailwind の rounded-full 相当のピル型で統一) --- */
+button {
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--pill);
+  border: 1px solid transparent;
+  color: var(--on-accent);
+  background: var(--accent);
+  font-weight: 600;
+  transition: background-color 0.12s, color 0.12s;
+}
+.btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.btn:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-fg);
+  border-color: transparent;
+  cursor: not-allowed;
+}
+/* 自分への招待は副次的な操作なのでアウトライン表示 */
+.btn.self-invite {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.btn.self-invite:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.btn.self-invite:disabled {
+  background: transparent;
+  color: var(--disabled-bg);
+  border-color: var(--disabled-bg);
+}
+.btn.text {
+  background: transparent;
+  color: var(--text-dim);
+  padding: 0 0.75rem;
+  border-color: transparent;
+}
+.btn.text:hover:not(:disabled) {
+  background: var(--hover-overlay);
+}
+.btn.text.danger {
+  color: var(--error);
+}
+.btn.text:disabled {
+  background: transparent;
+  color: var(--disabled-bg);
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--pill);
+  border: none;
+  background: transparent;
+  color: var(--accent);
+}
+.icon-btn:hover {
+  background: var(--hover-overlay);
+}
+.icon-btn.white {
+  color: var(--text-dim);
+}
+
+/* --- テキスト --- */
+.msg {
+  font-size: 13px;
+  min-height: 1em;
+}
+.msg.error {
+  color: var(--error);
+}
+.msg.warning {
+  color: var(--warning);
+}
+.msg.info {
+  color: var(--info);
+}
+.dim {
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+/* --- ドロップダウン (検索候補) --- */
+.dropdown {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+}
+.dropdown-item {
+  background: transparent;
+  padding: 6px 10px;
+  cursor: pointer;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: var(--item-hover);
+  outline: none;
+}
+.dropdown-group {
+  padding: 4px 10px 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: var(--item-hover);
+  border-bottom: 1px solid var(--border);
+}
+.dropdown-item .item-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--heading);
+}
+.item-tag {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 1px 6px;
+  border-radius: var(--pill);
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+}
+.field-hint {
+  margin: -4px 0 0;
+  font-size: 12px;
+}
+.dropdown-item .item-id {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* --- チップ --- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--pill);
+  padding: 3px 6px 3px 10px;
+  font-size: 12px;
+}
+.chip button {
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  display: inline-flex;
+  padding: 0;
+}
+.chip button:hover {
+  color: var(--text);
+}
+.counter {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* --- ログ --- */
+.log {
+  background: var(--log-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--log-fg);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  height: 220px;
+  overflow: auto;
+  padding: 8px 10px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* --- スピナー --- */
+.spinner {
+  display: inline-block;
+  border: 2px solid var(--spinner-track);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.spinner.large {
+  border-width: 3px;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- ダイアログ --- */
+dialog {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  box-shadow: var(--dialog-shadow);
+}
+dialog::backdrop {
+  background: var(--backdrop);
+}
+dialog h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--heading);
+}
+dialog .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+dialog.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+dialog.loading:not([open]) {
+  display: none;
+}

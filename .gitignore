@@ -1,21 +1,24 @@
 .env
 .claude
-*.pyc
-__pycache__/
 dev/
 
-# PyInstaller
-build/
+# Node / Vite
+node_modules/
 dist/
-*.spec
 
-# 仮想環境
-.venv/
-venv/
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
 
 # IDE
 .idea/
 .vscode/
 
-# ツールキャッシュ
+# 旧 Python 版 (legacy-python/) の生成物
+*.pyc
+__pycache__/
+build/
+*.spec
+.venv/
+venv/
 .ruff_cache/

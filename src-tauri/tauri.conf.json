@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "VRCInviteTool",
+  "mainBinaryName": "VRCInviteTool",
+  "identifier": "com.droplet-collective.vrcinvitetool",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "VRCInviteTool",
+        "width": 640,
+        "height": 900,
+        "minWidth": 560,
+        "minHeight": 600,
+        "resizable": true,
+        "center": true,
+        "theme": "Light"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "Droplet-Collective",
+    "category": "Utility",
+    "shortDescription": "VRChat のインスタンス作成・フレンド招待ツール",
+    "longDescription": "VRChat API を使ってインスタンスを作成し、フレンドを招待するデスクトップツール。",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["Japanese", "English"]
+      }
+    }
+  }
+}

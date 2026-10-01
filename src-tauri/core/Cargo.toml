@@ -1,0 +1,31 @@
+[package]
+name = "vrcinvite-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "VRCInviteTool の VRChat API クライアント・セッション保存 (Tauri 非依存)"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+reqwest = { version = "0.13", default-features = false, features = ["native-tls", "json", "query", "cookies", "http2", "charset"] }
+reqwest_cookie_store = "0.10"
+cookie_store = { version = "0.22", default-features = false, features = ["serde_json", "public_suffix"] }
+url = "2.5"
+regex = "1.11"
+directories = "6.0"
+base64 = "0.22"
+percent-encoding = "2.3"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+
+[dev-dependencies]
+wiremock = "0.6"
+tempfile = "3.20"
+base64 = "0.22"
