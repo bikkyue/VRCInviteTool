@@ -3,10 +3,10 @@
 import threading
 
 import flet as ft
-from vrchatapi.exceptions import UnauthorizedException
+from vrchatapi.exceptions import ApiException
 
-from auth import create_api_client, login, try_session_login
-from .theme import COLOR_PRIMARY, COLOR_ACCENT, COLOR_PAGE_BG, _section_header, _styled_card, _title_banner
+from auth import LoginError, create_api_client, format_api_error, login, try_session_login
+from .theme import COLOR_PRIMARY, COLOR_ACCENT, COLOR_PAGE_BG, COLOR_ERROR, _section_header, _styled_card, _title_banner
 from .state import AppState
 
 
@@ -29,7 +29,7 @@ def build_login_widgets(state: AppState) -> dict:
         border_color=COLOR_PRIMARY,
         focused_border_color=COLOR_ACCENT,
     )
-    login_error_text = ft.Text("", color="#EF5350", size=13, visible=False)
+    login_error_text = ft.Text("", color=COLOR_ERROR, size=13, visible=False)
     login_loading = ft.ProgressRing(width=20, height=20, stroke_width=2, visible=False)
     login_button = ft.ElevatedButton(
         "ログイン",
@@ -51,6 +51,7 @@ def show_login_view(state: AppState, widgets: dict):
     """ログイン画面を表示する。"""
     w = widgets
     w["login_error_text"].value = ""
+    w["login_error_text"].color = COLOR_ERROR
     w["login_error_text"].visible = False
     w["login_loading"].visible = False
     w["login_button"].disabled = False
@@ -109,19 +110,15 @@ def setup_login_handlers(state: AppState, widgets: dict, on_login_success):
 
             try:
                 api_client = create_api_client(username=uname, password=pwd)
-                ok = login(
+                # 明示ログインでは保存済みセッションを使わず、入力された認証情報で認証する
+                current_user = login(
                     api_client,
                     input_fn=state.two_factor_input_fn,
                     save_session=state.save_session,
-                    load_session=state.load_session,
                     clear_session=state.clear_session,
                 )
-                if ok:
+                if current_user:
                     state.save_username(uname)
-
-                    from vrchatapi.api import authentication_api as _auth_api_mod
-                    auth_api = _auth_api_mod.AuthenticationApi(api_client)
-                    current_user = auth_api.get_current_user()
                     state.api_client = api_client
                     state.display_name = current_user.display_name
                     state.user_id = current_user.id
@@ -133,6 +130,18 @@ def setup_login_handlers(state: AppState, widgets: dict, on_login_success):
                     w["login_button"].disabled = False
                     w["login_loading"].visible = False
                     state.page.update()
+            except LoginError as ex:
+                w["login_error_text"].value = str(ex)
+                w["login_error_text"].visible = True
+                w["login_button"].disabled = False
+                w["login_loading"].visible = False
+                state.page.update()
+            except ApiException as ex:
+                w["login_error_text"].value = f"エラー: {format_api_error(ex)}"
+                w["login_error_text"].visible = True
+                w["login_button"].disabled = False
+                w["login_loading"].visible = False
+                state.page.update()
             except Exception as ex:
                 w["login_error_text"].value = f"エラー: {ex}"
                 w["login_error_text"].visible = True
@@ -162,17 +171,14 @@ def startup_auto_login(state: AppState, widgets: dict, on_login_success):
             uname = state.load_username()
             if uname:
                 api_client = create_api_client(username=uname)
-                display_name = try_session_login(
+                current_user = try_session_login(
                     api_client,
                     load_session=state.load_session,
                     clear_session=state.clear_session,
                 )
-                if display_name:
-                    from vrchatapi.api import authentication_api as _auth_api_mod
-                    auth_api = _auth_api_mod.AuthenticationApi(api_client)
-                    current_user = auth_api.get_current_user()
+                if current_user:
                     state.api_client = api_client
-                    state.display_name = display_name
+                    state.display_name = current_user.display_name
                     state.user_id = current_user.id
                     on_login_success()
                     return
@@ -183,7 +189,7 @@ def startup_auto_login(state: AppState, widgets: dict, on_login_success):
         w["login_button"].disabled = False
         w["login_loading"].visible = False
         w["login_error_text"].value = ""
-        w["login_error_text"].color = "#EF5350"
+        w["login_error_text"].color = COLOR_ERROR
         w["login_error_text"].visible = False
         state.page.update()
 

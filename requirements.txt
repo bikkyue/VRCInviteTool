@@ -1,3 +1,4 @@
-vrchatapi
-flet>=0.21,<0.28
-requests
+vrchatapi==1.21.0
+flet>=0.23,<0.28
+flet-desktop>=0.23,<0.28
+requests>=2.32,<3

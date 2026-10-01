@@ -1,6 +1,21 @@
 .env
-.session.json
 .claude
 *.pyc
 __pycache__/
 dev/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# 仮想環境
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# ツールキャッシュ
+.ruff_cache/

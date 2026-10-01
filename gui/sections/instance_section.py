@@ -207,9 +207,8 @@ def setup_instance_handlers(state: AppState, widgets: dict, on_instance_created=
                 thumbnail_url = world.thumbnail_image_url or world.image_url
                 if thumbnail_url:
                     try:
-                        cookies = {}
-                        for cookie in state.api_client.rest_client.cookie_jar:
-                            cookies[cookie.name] = cookie.value
+                        # CookieJar をそのまま渡し、requests にドメイン照合させる
+                        cookies = state.api_client.rest_client.cookie_jar
                         headers = {"User-Agent": state.api_client.user_agent}
                         response = requests.get(thumbnail_url, cookies=cookies, headers=headers, timeout=10)
                         response.raise_for_status()
@@ -318,6 +317,7 @@ def setup_instance_handlers(state: AppState, widgets: dict, on_instance_created=
                     world_id=world_id_field.value or None,
                     instance_type=instance_type_dropdown.value or None,
                     instance_region=instance_region_dropdown.value or None,
+                    owner_id=state.user_id or None,
                 )
                 location_field.value = location
                 location_row.visible = True

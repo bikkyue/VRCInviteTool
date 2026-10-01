@@ -3,6 +3,7 @@
 import flet as ft
 
 from .state import AppState
+from .theme import COLOR_WARNING
 from .login_view import build_login_widgets, show_login_view, setup_login_handlers, startup_auto_login
 from .main_view import show_main_view
 from .sections.instance_section import build_instance_widgets, setup_instance_handlers
@@ -59,7 +60,7 @@ def main(page: ft.Page):
 
     def _set_session_expired_message():
         login_w["login_error_text"].value = "セッションが切れました。再度ログインしてください。"
-        login_w["login_error_text"].color = ft.colors.AMBER
+        login_w["login_error_text"].color = COLOR_WARNING
         login_w["login_error_text"].visible = True
         page.update()
 

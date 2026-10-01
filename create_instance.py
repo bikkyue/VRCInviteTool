@@ -14,8 +14,12 @@ def create_instance(
     world_id=None,
     instance_type="public",
     instance_region="jp",
+    owner_id=None,
 ) -> str:
-    """インスタンスを作成して情報を表示し、location文字列を返す。"""
+    """インスタンスを作成して情報を表示し、location文字列を返す。
+
+    owner_id: 自分のユーザーID。public 以外で未指定の場合のみ API から取得する。
+    """
 
     _TYPE_DISPLAY = {
         "public": "Public",
@@ -37,8 +41,9 @@ def create_instance(
         instance_type = "private"
 
     # owner_id の決定 (public 以外は自分のユーザーID)
-    owner_id = None
-    if instance_type != "public":
+    if instance_type == "public":
+        owner_id = None
+    elif not owner_id:
         auth_api = authentication_api.AuthenticationApi(api_client)
         current_user = auth_api.get_current_user()
         owner_id = current_user.id
@@ -49,13 +54,9 @@ def create_instance(
         region=instance_region,
         owner_id=owner_id or None,
         can_request_invite=True if can_request_invite else None,
-        hard_close=None,
-        invite_only=None,
-        queue_enabled=None,
-        age_gate=None,
     )
 
-    print(f"\nインスタンスを作成中...")
+    print("\nインスタンスを作成中...")
     print(f"  ワールドID : {world_id}")
     print(f"  タイプ     : {display_type}")
     print(f"  リージョン : {instance_region}")

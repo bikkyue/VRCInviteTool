@@ -11,6 +11,8 @@ COLOR_INVITE = "#AB47BC"        # パープル（招待ボタン）
 COLOR_CARD_BG = "#1E1E2E"       # ダークカード背景
 COLOR_PAGE_BG = "#121218"       # ページ背景
 COLOR_HEADER_TEXT = "#BBDEFB"   # 薄いブルー（ヘッダー文字）
+COLOR_ERROR = "#EF5350"         # 赤（エラー表示）
+COLOR_WARNING = ft.Colors.AMBER # 黄（セッション切れ等の警告）
 
 # --- ボタン無効時の色 ---
 _DISABLED_BGCOLOR = "#3A3A4A"

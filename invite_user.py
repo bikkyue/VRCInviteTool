@@ -8,7 +8,7 @@ from typing import Optional
 import vrchatapi
 from vrchatapi.api import invite_api
 from vrchatapi.models import InviteRequest
-from vrchatapi.exceptions import ApiException
+from vrchatapi.exceptions import ApiException, UnauthorizedException
 
 def invite_myself(
     api_client: vrchatapi.ApiClient,
@@ -32,13 +32,13 @@ def invite_myself(
 
     inv_api = invite_api.InviteApi(api_client)
 
-    print(f"\n自分への招待を送信中...")
+    print("\n自分への招待を送信中...")
     print(f"  ワールドID    : {world_id}")
     print(f"  インスタンスID: {instance_id}")
 
     try:
         notification = inv_api.invite_myself_to(world_id, instance_id)
-        print(f"\n自分への招待を送信しました。")
+        print("\n自分への招待を送信しました。")
         print(f"  通知ID   : {notification.id}")
         print(f"  送信日時 : {notification.created_at}")
         return True
@@ -59,7 +59,7 @@ def invite_user(
     Args:
         api_client: VRChat APIクライアント
         user_id: 招待するユーザーのID（例: usr_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx）
-        instance_id: 招待先のインスタンスID（例: wrld_xxx~public(xxx)~region(jp)）
+        instance_id: 招待先のインスタンスID（例: wrld_xxx:12345~region(jp)）
         message_slot: 招待メッセージのスロット番号（0〜11, 省略可）
 
     Returns:
@@ -71,7 +71,7 @@ def invite_user(
     if message_slot is not None:
         request.message_slot = message_slot
 
-    print(f"\n招待を送信中...")
+    print("\n招待を送信中...")
     print(f"  ユーザーID   : {user_id}")
     print(f"  インスタンスID: {instance_id}")
     if message_slot is not None:
@@ -79,11 +79,14 @@ def invite_user(
 
     try:
         notification = inv_api.invite_user(user_id, invite_request=request)
-        print(f"\n招待を送信しました。")
+        print("\n招待を送信しました。")
         print(f"  通知ID   : {notification.id}")
         print(f"  送信先   : {notification.receiver_user_id}")
         print(f"  送信日時 : {notification.created_at}")
         return True
+    except UnauthorizedException:
+        # セッション失効は呼び出し側で再ログイン処理させる
+        raise
     except ApiException as e:
         if e.status == 403:
             print(f"\nエラー: ユーザー {user_id} はフレンドではないため招待できません。")

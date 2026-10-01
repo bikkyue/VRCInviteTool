@@ -181,17 +181,18 @@ def setup_invite_handlers(state: AppState, widgets: dict):
                 user = api.get_user(user_id)
                 # state.log_queue.put(f"ユーザー名: {user.display_name}\n")
 
+                # vrchatapi 1.21 以降は icon_url、旧版は profile_pic_override 等
                 icon_url = (
-                    user.profile_pic_override
-                    or user.profile_pic_override_thumbnail
-                    or user.current_avatar_image_url
-                    or user.current_avatar_thumbnail_image_url
+                    getattr(user, "icon_url", None)
+                    or getattr(user, "profile_pic_override", None)
+                    or getattr(user, "profile_pic_override_thumbnail", None)
+                    or getattr(user, "current_avatar_image_url", None)
+                    or getattr(user, "current_avatar_thumbnail_image_url", None)
                 )
                 if icon_url:
                     try:
-                        cookies = {}
-                        for cookie in state.api_client.rest_client.cookie_jar:
-                            cookies[cookie.name] = cookie.value
+                        # CookieJar をそのまま渡し、requests にドメイン照合させる
+                        cookies = state.api_client.rest_client.cookie_jar
                         headers = {"User-Agent": state.api_client.user_agent}
                         response = requests.get(icon_url, cookies=cookies, headers=headers, timeout=10)
                         response.raise_for_status()
@@ -344,19 +345,43 @@ def setup_invite_handlers(state: AppState, widgets: dict):
 
                 total = len(targets)
                 state.log_queue.put(f"{total}人に招待を送信します...\n")
+                failed: list = []
+                sent = 0
                 for i, uid in enumerate(targets):
                     fname = selected_friend_names.get(uid, uid)
                     state.log_queue.put(f"[{i+1}/{total}] {fname} に招待中...\n")
-                    invite_user(state.api_client, uid, iid)
+                    try:
+                        ok = invite_user(state.api_client, uid, iid)
+                    except UnauthorizedException:
+                        state.log_queue.put(
+                            f"セッションが切れました (送信済み: 成功 {sent} 件 / 失敗 {len(failed)} 件、"
+                            f"未送信 {total - i} 件)。再ログインしてください。\n"
+                        )
+                        raise
+                    if ok:
+                        sent += 1
+                    else:
+                        failed.append(uid)
                     if i < total - 1:
                         time.sleep(1)
-                state.log_queue.put("全ての招待を送信しました。\n")
 
-                # 選択をリセット
-                selected_friend_ids.clear()
-                selected_friend_names.clear()
+                succeeded = total - len(failed)
+                if failed:
+                    failed_names = ", ".join(selected_friend_names.get(u, u) for u in failed)
+                    state.log_queue.put(
+                        f"招待完了: 成功 {succeeded} 件 / 失敗 {len(failed)} 件 ({failed_names})\n"
+                        "失敗した相手は選択状態に残しています。\n"
+                    )
+                else:
+                    state.log_queue.put(f"全ての招待を送信しました (成功 {succeeded} 件)。\n")
+
+                # 成功した相手のみ選択から外す (失敗分は再送できるよう残す)
+                for uid in targets:
+                    if uid not in failed:
+                        selected_friend_ids.discard(uid)
+                        selected_friend_names.pop(uid, None)
                 rebuild_chips()
-                selection_counter.value = "選択中: 0 / 20"
+                selection_counter.value = f"選択中: {len(selected_friend_ids)} / 20"
                 user_icon.visible = False
                 user_display_name.visible = False
                 user_info_error.visible = False
